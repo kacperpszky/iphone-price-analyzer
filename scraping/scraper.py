@@ -15,10 +15,11 @@ def get_offers(url):
             price = offer.find("p", class_="css-uj7mm0").text
             location = offer.find("p", class_="css-vbz67q").text
             condition = offer.find("span", class_="css-iudov9")["title"]
-            print(f"Appending {title}, {price}, {location}, {condition}")
             data.append([title, price, location, condition])
+            
         except Exception as e:
             continue  # możesz też dodać "print(e)" do debugowania
+    print(f"Appended offers to .csv")
 
 
     with open(".\\data\\olx_iphones.csv", "w", newline="", encoding="utf-8") as file:
