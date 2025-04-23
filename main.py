@@ -1,5 +1,6 @@
 from scraping.scraper import get_offers
 from processing.cleaner import clean_iphone_data
+from analysis.analyzer import analyze_csv
 
 url = "https://www.olx.pl/oferty/q-iphone/?search%5Border%5D=created_at:desc"
 
@@ -11,3 +12,5 @@ url = "https://www.olx.pl/oferty/q-iphone/?search%5Border%5D=created_at:desc"
 if __name__ == "__main__":
     offers = get_offers(url)
     clean_iphone_data()
+    analyze_data = analyze_csv()
+    print(analyze_data)
