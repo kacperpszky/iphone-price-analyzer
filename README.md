@@ -2,7 +2,7 @@
 
 A Python-based desktop application using PyQt5 that scrapes OLX listings for iPhones, cleans and analyzes pricing data with Pandas, and displays key statistics (average, minimum, maximum, median) for each model in a user-friendly GUI.
 
-* **Data Scraping** - Live data fetched directly from OLX using **requests**
+* **Data Scraping** - Live data fetched directly from OLX using **requests and Beautiful Soup 4**
 * **Data Analysis** – Processed with **Pandas** for clear and structured model-based price statistics.
 * **Data Cleaning** – Filters out irrelevant listings (cases, chargers, accessories, etc.).
 * **User Interface** – Desktop GUI (**PyQt5**) allows user to input location and instantly view results.
