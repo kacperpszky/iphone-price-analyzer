@@ -3,7 +3,7 @@ import re
 
 analyze_result = []
 
-def analyze_csv(inputh_file="data/iphones_only.csv"):
+def analyze_csv(output="default", inputh_file="data/iphones_only.csv"):
     df = pd.read_csv(inputh_file)
 
     df["Model"] = df["Title"].str.extract(r"(iPhone\s?\d{1,2}(?:\s?(?:Pro|PRO|Pro Max|Plus|Mini|Max))?)", expand=False, flags=re.IGNORECASE)
@@ -19,9 +19,8 @@ def analyze_csv(inputh_file="data/iphones_only.csv"):
     )
     
     
-    
-    price_stats = df.groupby("Model")["Price"].agg(["count", "mean", "min", "max", "median"]).round(2)
-    analyze_result.append(price_stats)
+    df["Price"] = pd.to_numeric(df["Price"], errors="coerce")
+    price_stats = df.groupby("Model")["Price"].agg(["count","mean", "min", "max", "median"]).round(2)
+    result_list = price_stats.reset_index().to_dict(orient="records")
 
-    return(analyze_result)
-    
+    return result_list
