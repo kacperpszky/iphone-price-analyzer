@@ -2,7 +2,7 @@ from scraping.scraper import get_offers
 from processing.cleaner import clean_iphone_data
 from analysis.analyzer import analyze_csv
 import sys
-from PyQt5.QtWidgets import QApplication, QMainWindow, QLabel, QWidget, QPushButton, QLineEdit
+from PyQt5.QtWidgets import QApplication, QMainWindow, QLabel, QWidget, QPushButton, QLineEdit, QTableWidget, QTableWidgetItem
 from PyQt5.QtGui import QIcon, QFont
 from PyQt5.QtCore import Qt
 
@@ -49,6 +49,33 @@ class MainWindow(QMainWindow):
         self.button.setGeometry(500, 110, 150, 35)
         self.button.clicked.connect(self.handle_button_click)
         
+        
+        self.table = QTableWidget(self)
+        self.table.setGeometry(0, 180, 700, 500)
+        self.table.setColumnCount(5) 
+        self.table.setHorizontalHeaderLabels(["Count", "Mean", "Min", "Max", "Median"])
+        self.table.verticalHeader().setVisible(False)
+        self.table.setStyleSheet("padding-left: 10px;"
+                                    "padding-right: 10px;"
+                                    "margin-left: 20px;"
+                                    "margin-right: 20px;")
+     
+       
+    def display_analysis(self, results):
+        headers = ["Model", "count", "mean", "min", "max", "median"]
+        self.table.setColumnCount(len(headers))
+        self.table.setHorizontalHeaderLabels(headers)
+        self.table.setRowCount(len(results))
+        self.table.horizontalHeader().setDefaultAlignment(Qt.AlignCenter)
+
+        for i, row in enumerate(results):
+            for j, key in enumerate(headers):
+                value = str(row.get(key, ""))
+                item = QTableWidgetItem(value)
+                item.setTextAlignment(Qt.AlignCenter)
+                self.table.setItem(i, j, item)   
+       
+        
     def handle_button_click(self):
         wojewodztwo = str(self.input_field.text())
         if wojewodztwo=="polska":
@@ -58,8 +85,12 @@ class MainWindow(QMainWindow):
        
         offers = get_offers(url)
         clean_iphone_data()
-        analyze_data = analyze_csv()
-        print(analyze_data)
+        result = analyze_csv()
+        self.display_analysis(result)
+          
+    
+        
+  
         
     
         

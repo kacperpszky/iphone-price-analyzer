@@ -21,6 +21,5 @@ def analyze_csv(output="default", inputh_file="data/iphones_only.csv"):
     
     df["Price"] = pd.to_numeric(df["Price"], errors="coerce")
     price_stats = df.groupby("Model")["Price"].agg(["count","mean", "min", "max", "median"]).round(2)
-    result_list = price_stats.reset_index().to_dict(orient="records")
 
-    return result_list
+    return price_stats.reset_index().to_dict(orient="records")
