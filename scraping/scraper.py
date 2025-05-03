@@ -18,7 +18,7 @@ def get_offers(url):
             data.append([title, price, location, condition])
             
         except Exception as e:
-            continue  # możesz też dodać "print(e)" do debugowania
+            continue  
     print(f"Appended offers to .csv")
 
 
