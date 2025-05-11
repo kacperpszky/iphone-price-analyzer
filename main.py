@@ -1,19 +1,12 @@
 from scraping.scraper import get_offers
 from processing.cleaner import clean_iphone_data
-from analysis.analyzer import analyze_csv
-import sys
+from analysis.analyzer import analyze_csv, plot_model_trend, plot_price_trend
+import sys, time
 from PyQt5.QtWidgets import QApplication, QMainWindow, QLabel, QWidget, QPushButton, QLineEdit, QTableWidget, QTableWidgetItem
 from PyQt5.QtGui import QIcon, QFont
 from PyQt5.QtCore import Qt
 
-
-# [DONE] dodac mozliwosc edycji url z requestem aby przyjmowac jedynie rekordy z danej lokalizacji np. sam Gdansk/Gdynia itd i dawac analize jako 
-# pomorskie/dolnoslaskie/kujawsko-pomorskie/lubelskie/lubuskie/lodzkie/malopolskie/mazowieckie/opolskie/podkarpackie/podlaskie/slaskie/swietokrzyskie/warminsko-mazurskie/wielkopolskie/zachodniopomorskie.
-
-# [in progress] zrobic zajebiste GUI najlepiej w czyms praktycznym, moze byc PyQt / streamlit
-# export analizy/wykresu na pewno musi sie tu znalezc, wiec dodac w przyszlosci
-# co do analizy dodac trend ip, jakie kiedy byly najbardziej popularne itd.....
-
+WOJEWODZTWO = ""
 
 class MainWindow(QMainWindow):
     def __init__(self):
@@ -49,9 +42,8 @@ class MainWindow(QMainWindow):
         self.button.setGeometry(500, 110, 150, 35)
         self.button.clicked.connect(self.handle_button_click)
         
-        
         self.table = QTableWidget(self)
-        self.table.setGeometry(0, 180, 700, 500)
+        self.table.setGeometry(0, 180, 700, 400)
         self.table.setColumnCount(5) 
         self.table.setHorizontalHeaderLabels(["Count", "Mean", "Min", "Max", "Median"])
         self.table.verticalHeader().setVisible(False)
@@ -60,6 +52,13 @@ class MainWindow(QMainWindow):
                                     "margin-left: 20px;"
                                     "margin-right: 20px;")
      
+        self.button_trend = QPushButton("Show Trend Plot", self)
+        self.button_trend.setGeometry(200, 600, 150, 35)
+        self.button_trend.clicked.connect(self.handle_trend_button)
+        
+        self.button_price = QPushButton("Show Price Plot", self)
+        self.button_price.setGeometry(350, 600, 150, 35)
+        self.button_price.clicked.connect(self.handle_price_button)      
        
     def display_analysis(self, results):
         headers = ["Model", "count", "mean", "min", "max", "median"]
@@ -74,32 +73,26 @@ class MainWindow(QMainWindow):
                 item = QTableWidgetItem(value)
                 item.setTextAlignment(Qt.AlignCenter)
                 self.table.setItem(i, j, item)   
-       
-        
+             
     def handle_button_click(self):
-        wojewodztwo = str(self.input_field.text())
-        if wojewodztwo=="polska":
+        WOJEWODZTWO = str(self.input_field.text())
+        if WOJEWODZTWO=="polska":
             url = "https://www.olx.pl/elektronika/telefony/smartfony-telefony-komorkowe/iphone/?search%5Border%5D=created_at:desc"
         else:
-            url = f"https://www.olx.pl/elektronika/telefony/smartfony-telefony-komorkowe/iphone/{wojewodztwo}/?search%5Border%5D=created_at:desc"
+            url = f"https://www.olx.pl/elektronika/telefony/smartfony-telefony-komorkowe/iphone/{WOJEWODZTWO}/?search%5Border%5D=created_at:desc"
        
         offers = get_offers(url)
-        clean_iphone_data()
+        clean_iphone_data(WOJEWODZTWO)
         result = analyze_csv()
         self.display_analysis(result)
-          
-    
+        time.sleep(1)
         
-  
+    def handle_trend_button(self):
+        plot_model_trend(WOJEWODZTWO)
         
-    
-        
-        
-        
-        
-        
-
-
+    def handle_price_button(self):
+        plot_price_trend(WOJEWODZTWO)
+      
 if __name__ == "__main__":
     
     app = QApplication(sys.argv)

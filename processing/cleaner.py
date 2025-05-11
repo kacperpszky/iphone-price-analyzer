@@ -1,6 +1,8 @@
 import pandas as pd
+import os
+from datetime import datetime
 
-def clean_iphone_data(input_path="data/olx_iphones.csv", output_path="data/iphones_only.csv"):
+def clean_iphone_data(region, input_path="data/olx_iphones.csv", output_path="data/iphones_only.csv", history_path="data/history_ip.csv"):
     df = pd.read_csv(input_path)
     
     iphone_mask = df["Title"].str.lower().str.contains("iphone")
@@ -24,4 +26,15 @@ def clean_iphone_data(input_path="data/olx_iphones.csv", output_path="data/iphon
     
     print(f"Cleaned offers in .csv")
     df.to_csv(output_path, index=False)
+    
+    df["ScrapeDate"] = datetime.today().strftime("%Y-%m-%d")
+    df["Region"] = region.lower()
+    if os.path.exists(history_path):
+        old_df = pd.read_csv(history_path)
+        combined = pd.concat([old_df, df], ignore_index=True)
+        combined.drop_duplicates(subset=["Title", "Price", "Location"], inplace=True)
+        combined.to_csv(history_path, index=False)
+    else:
+        df.to_csv(history_path, index=False)
 
+    print("Cleaned offers saved. Historical data updated.")
